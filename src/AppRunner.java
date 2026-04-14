@@ -58,24 +58,77 @@ public class AppRunner {
     }
 
     private void chooseAction(UniversalArray<Product> products) {
+        boolean bool;
         showActions(products);
         print(" h - Выйти");
-        String action = fromConsole().substring(0, 1);
+        print(" a - Пополнить баланс монет");
+        print(" l - Пополнить баланс купюр");
         try {
-            for (int i = 0; i < products.size(); i++) {
-                if (products.get(i).getActionLetter().equals(ActionLetter.valueOf(action.toUpperCase()))) {
-                    chooseAPaymentMethod(i);
-                } else if ("h".equalsIgnoreCase(action)) {
-                    isExit = true;
-                    break;
+            String action = fromConsole().substring(0, 1);
+            if ("h".equalsIgnoreCase(action)) {
+                isExit = true;
+            } else if ("a".equalsIgnoreCase(action) || "l".equalsIgnoreCase(action)) {
+                topUpYourBalance(action);
+            } else {
+                for (int i = 0; i < products.size(); i++) {
+                    if (products.get(i).getActionLetter().equals(ActionLetter.valueOf(action.toUpperCase()))) {
+                        chooseAPaymentMethod(i);
+                    }
                 }
             }
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e){
+            print("Недопустимая буква. Попробуйте еще раз.");
+            chooseAction(products);
+        } catch (StringIndexOutOfBoundsException sioobe){
             print("Недопустимая буква. Попробуйте еще раз.");
             chooseAction(products);
         }
 
+    }
 
+    private void topUpYourBalance (String action) {
+        boolean bool;
+        if (action.equalsIgnoreCase("a")){
+            do {
+                print("Введите сумму пополнения:");
+                String str = fromConsole();
+                int upAmount;
+                try {
+                    upAmount = Integer.parseInt(str);
+                    if (upAmount > 0){
+                        coinAcceptor.setAmount(coinAcceptor.getAmount() + upAmount);
+                        bool = false;
+                    } else {
+                        System.out.println("Вы не можете вести эту сумму! Попробуйте еще!");
+                        bool = true;
+                    }
+                } catch (NumberFormatException e) {
+                    print("Попробуйте еще раз!");
+                    bool = true;
+                    break;
+                }
+            } while (bool);
+        } else if (action.equalsIgnoreCase("l")) {
+            do {
+                print("Введите сумму пополнения:");
+                String str = fromConsole();
+                int upAmount;
+                try {
+                    upAmount = Integer.parseInt(str);
+                    if (upAmount > 0){
+                        billAcceptor.setAmount(billAcceptor.getAmount() + upAmount);
+                        bool = false;
+                    } else {
+                        System.out.println("Вы не можете вести эту сумму! Попробуйте еще!");
+                        bool = true;
+                    }
+                } catch (NumberFormatException e) {
+                    print("Попробуйте еще раз!");
+                    bool = true;
+                    break;
+                }
+            } while (bool);
+        }
     }
 
     private void chooseAPaymentMethod (int i){
