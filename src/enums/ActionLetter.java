@@ -2,6 +2,8 @@ package enums;
 
 public enum ActionLetter {
     A("a"),
+    L ("l"),
+
     B("b"),
     C("c"),
     D("d"),
